@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Post New Academic Item"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item Title"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/editTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. Calculus 1 Textbook"
+            android:inputType="textCapSentences"
+            android:maxLength="80"
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/edittext_border"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerCategory"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/edittext_border"
+            android:paddingHorizontal="8dp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Course Code or Dept Tag (optional)"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/editTag"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. MATH 101 or CITCS"
+            android:inputType="textCapCharacters"
+            android:maxLength="20"
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/edittext_border"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Condition"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerCondition"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/edittext_border"
+            android:paddingHorizontal="8dp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price in ₱ (leave blank if trade only)"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/editPrice"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g. 250"
+            android:inputType="numberDecimal"
+            android:paddingHorizontal="12dp"
+            android:background="@drawable/edittext_border"
+            android:layout_marginBottom="8dp"/>
+
+        <CheckBox
+            android:id="@+id/checkTrade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open to trade / barter"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description (optional)"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/editDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="80dp"
+            android:gravity="top"
+            android:hint="e.g. Has some highlights in chapters 1 to 3"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLength="300"
+            android:padding="12dp"
+            android:background="@drawable/edittext_border"/>
+    </LinearLayout>
+</ScrollView>

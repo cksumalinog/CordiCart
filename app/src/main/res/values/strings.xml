@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">CordiCart</string>
+    <string name="send_code">Send Code</string>
+    <string name="error_empty_email">Error: Please enter an email address.</string>
+    <string name="verification_success">Verification Successful! Welcome to CordiCart.</string>
+    <string name="error_invalid_email">Access Denied: Only @students.uc-bcf.edu.ph emails are allowed.</string>
+    <string name="error_empty_name">Error: Please enter your full name.</string>
+    <string name="error_invalid_otp">Error: Please enter the 6-digit code.</string>
+    <string name="error_short_password">Error: Password must be at least 8 characters.</string>
+    <string name="error_wrong_password">Error: Incorrect password for this account.</string>
+
+    <string-array name="department_options">
+        <item>CITCS</item>
+        <item>CEA</item>
+        <item>CBA</item>
+        <item>CAS</item>
+        <item>CHS</item>
+        <item>CCJE</item>
+        <item>COA</item>
+    </string-array>
 </resources>
