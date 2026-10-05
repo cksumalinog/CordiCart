@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "657627423176",
+    "project_id": "cordicart-4a7c9",
+    "storage_bucket": "cordicart-4a7c9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657627423176:android:732ced4092fb5ff89260fd",
+        "android_client_info": {
+          "package_name": "com.cordicart.cordicart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDot6r-0m_0379DkLnTldnk0kDlW7jI10s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
