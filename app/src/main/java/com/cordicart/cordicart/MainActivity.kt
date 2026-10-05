@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                     showInfo("Demo mode: email sending is not configured.")
                     AlertDialog.Builder(this)
                         .setTitle("Demo mode")
-                        .setMessage("SMTP is not set up, so your code is shown here instead:\n\n$fallbackCode")
+                        .setMessage("Code: $fallbackCode")
                         .setPositiveButton("OK", null)
                         .show()
                 } else {
