@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Headings. FONT (headings): change sans-serif to @font/bricolage_grotesque -->
+    <style name="CC.Heading" parent="">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_ink</item>
+    </style>
+    <style name="CC.Heading.Title">
+        <item name="android:textSize">28sp</item>
+        <item name="android:lineSpacingMultiplier">1.05</item>
+    </style>
+    <style name="CC.Heading.Section">
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="CC.Heading.Price">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/cc_pine</item>
+    </style>
+
+    <style name="CC.Body" parent="">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/cc_muted</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+    <style name="CC.Caption" parent="">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/cc_muted</item>
+    </style>
+    <style name="CC.Label" parent="">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+    <style name="CC.Link" parent="">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_pine</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="CC.Input" parent="">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="android:textColorHint">@color/cc_hint</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="CC.Button" parent="Widget.Material3.Button">
+        <item name="android:layout_height">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/cc_pine</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+    <style name="CC.Button.Amber">
+        <item name="backgroundTint">@color/cc_amber</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="iconTint">@color/cc_ink</item>
+    </style>
+    <style name="CC.Button.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:layout_height">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="strokeColor">@color/cc_pine</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/cc_pine</item>
+    </style>
+
+    <!-- Category chips on the dashboard -->
+    <style name="CC.Chip" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:drawableTint">@color/cc_ink</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- Category tiles on Post an item -->
+    <style name="CC.CategoryTile" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="android:background">@drawable/bg_option</item>
+        <item name="android:drawableTint">@color/cc_ink</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <!-- Condition pills on Post an item -->
+    <style name="CC.Pill" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="android:background">@drawable/bg_pill_option</item>
+    </style>
+
+    <!-- 6-digit code boxes -->
+    <style name="CC.OtpBox" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:background">@drawable/bg_otp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_ink</item>
+        <item name="android:importantForAutofill">no</item>
+    </style>
+
+    <!-- Bottom navigation items -->
+    <style name="CC.NavItem" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+    <style name="CC.NavLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/cc_muted</item>
+    </style>
+    <style name="CC.NavIcon" parent="">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="tint">@color/cc_muted</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <!-- Profile bottom sheet -->
+    <style name="CC.BottomSheetDialog" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CC.BottomSheet</item>
+    </style>
+    <style name="CC.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">@color/cc_bg</item>
+    </style>
+</resources>

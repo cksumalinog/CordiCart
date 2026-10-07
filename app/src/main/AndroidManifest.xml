@@ -17,16 +17,26 @@
         android:theme="@style/Theme.CordiCart"
         tools:targetApi="31">
 
+        <!-- 1 · Log in (launcher) -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".FeedActivity" android:exported="false" />
+        <!-- 2 · Create account -->
+        <activity android:name=".RegisterActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <!-- 3 · Verify your email -->
+        <activity android:name=".VerifyEmailActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <!-- 4 · Marketplace dashboard -->
+        <activity android:name=".FeedActivity" android:exported="false" android:windowSoftInputMode="adjustPan" />
+        <!-- 5 · Post an item -->
+        <activity android:name=".PostItemActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <!-- 6 · Listing details -->
         <activity android:name=".ListingDetailActivity" android:exported="false" />
     </application>
 </manifest>

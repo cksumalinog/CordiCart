@@ -1,7 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CordiCart" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!--
+        FONTS: the design uses Manrope (body text) and Bricolage Grotesque (headings).
+        After adding them to res/font (see README), change the two lines marked FONT below:
+            sans-serif  ->  @font/manrope
+            sans-serif  ->  @font/bricolage_grotesque
+    -->
+    <style name="Base.Theme.CordiCart" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/cc_pine</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/cc_pine_tint</item>
+        <item name="colorOnPrimaryContainer">@color/cc_pine</item>
+        <item name="colorSecondary">@color/cc_amber</item>
+        <item name="colorOnSecondary">@color/cc_ink</item>
+        <item name="colorSurface">@color/cc_card</item>
+        <item name="colorOnSurface">@color/cc_ink</item>
+        <item name="colorOutline">@color/cc_input_line</item>
+        <item name="android:colorBackground">@color/cc_bg</item>
+        <item name="android:windowBackground">@color/cc_bg</item>
+        <item name="android:textColorPrimary">@color/cc_ink</item>
+        <item name="android:textColorSecondary">@color/cc_muted</item>
+        <item name="android:textColorHint">@color/cc_hint</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+        <!-- FONT (body) -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
     </style>
+
+    
 </resources>

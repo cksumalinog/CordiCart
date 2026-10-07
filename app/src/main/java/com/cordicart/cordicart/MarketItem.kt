@@ -26,20 +26,12 @@ data class MarketItem(
 
     fun isOwnedBy(uid: String?): Boolean = uid != null && uid == sellerId
 
+    /** Plain-text price, used for accessibility labels. Screens use Ui.priceText for the styled version. */
     val displayPrice: String
         get() = when {
             price != null && openToTrade -> "${formatPeso(price)} or trade"
             price != null -> formatPeso(price)
             else -> "Trade only"
-        }
-
-    /** Text shown in the grey image placeholder on each card. */
-    val imageLabel: String
-        get() = when (category) {
-            "Textbooks" -> "📚 Textbook"
-            "Uniforms" -> "👕 Uniform"
-            "Drafting & Lab Gear" -> "📐 Drafting / Lab"
-            else -> "📦 Item"
         }
 
     /** True if the item is in the chosen category AND matches the search text. */
@@ -105,7 +97,7 @@ data class MarketItem(
             return MarketItem(
                 id = doc.id,
                 title = title,
-                category = doc.getString("category").orDefault("Other"),
+                category = Categories.normalize(doc.getString("category")),
                 courseCode = doc.getString("courseCode").orDefault(DEFAULT_COURSE_CODE),
                 condition = doc.getString("condition").orDefault("Used"),
                 price = doc.getDouble("price"),

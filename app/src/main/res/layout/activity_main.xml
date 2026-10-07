@@ -1,240 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Screen 1 · Log in (launcher screen) -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cc_bg"
     android:fillViewport="true"
-    android:fitsSystemWindows="true"
-    android:background="#FFFFFF">
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center_horizontal">
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="28dp">
 
-        <!-- Header Logo Badge -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🛒 CordiCart"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="#000000"
-            android:background="@drawable/badge_border"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"/>
+        <ImageView
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/cordicart_logo"
+            android:contentDescription="@string/app_name" />
 
-        <!-- Title & Subtitle -->
         <TextView
-            android:layout_width="wrap_content"
+            style="@style/CC.Heading.Title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Welcome to CordiCart"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
+            android:layout_marginTop="12dp"
             android:gravity="center"
-            android:layout_marginBottom="6dp"/>
+            android:text="@string/login_title" />
 
         <TextView
-            android:layout_width="wrap_content"
+            style="@style/CC.Body"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="The exclusive marketplace for University of the Cordilleras students"
-            android:textSize="13sp"
-            android:textColor="#666666"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="24dp"
             android:gravity="center"
-            android:layout_marginBottom="24dp"/>
+            android:text="@string/login_subtitle" />
 
-        <!-- Form: Full Name -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Full Name"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:layout_marginBottom="4dp"/>
-
-        <EditText
-            android:id="@+id/nameInput"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="e.g. Juan Dela Cruz"
-            android:inputType="textPersonName"
-            android:paddingHorizontal="12dp"
-            android:background="@drawable/edittext_border"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Form: Department -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Department"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:layout_marginBottom="4dp"/>
-
-        <Spinner
-            android:id="@+id/departmentSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:entries="@array/department_options"
-            android:background="@drawable/edittext_border"
-            android:paddingHorizontal="8dp"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Form: University Email -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="University Email"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:layout_marginBottom="4dp"/>
-
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/label_email" />
         <EditText
             android:id="@+id/emailInput"
+            style="@style/CC.Input"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="username@students.uc-bcf.edu.ph"
+            android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
-            android:paddingHorizontal="12dp"
-            android:background="@drawable/edittext_border"
-            android:layout_marginBottom="16dp"/>
+            android:autofillHints="emailAddress" />
 
-        <!-- Form: Password -->
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/label_password" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/passwordInput"
+                style="@style/CC.Input"
+                android:layout_width="match_parent"
+                android:paddingEnd="52dp"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
+                android:autofillHints="password" />
+
+            <ImageButton
+                android:id="@+id/btnTogglePassword"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_eye"
+                app:tint="@color/cc_muted"
+                android:contentDescription="Show password" />
+        </FrameLayout>
+
         <TextView
+            android:id="@+id/btnForgotPassword"
+            style="@style/CC.Link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/forgot_password" />
+
+        <include
+            android:id="@+id/msgBox"
+            layout="@layout/layout_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Password"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="12dp" />
 
-        <EditText
-            android:id="@+id/passwordInput"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="At least 8 characters"
-            android:inputType="textPassword"
-            android:paddingHorizontal="12dp"
-            android:background="@drawable/edittext_border"
-            android:layout_marginBottom="6dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="New here? Your account is created automatically. Returning? Just enter your email and password."
-            android:textSize="12sp"
-            android:textColor="#888888"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Send Code Button -->
         <Button
-            android:id="@+id/sendCodeButton"
+            android:id="@+id/btnLogin"
+            style="@style/CC.Button"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="@string/send_code"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:backgroundTint="#555555"
-            android:layout_marginBottom="20dp"/>
+            android:text="@string/log_in" />
 
-        <!-- Security Verification Divider -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="32dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="#CCCCCC"/>
-
+            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="@color/cc_line" />
             <TextView
+                style="@style/CC.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SECURITY VERIFICATION"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:textColor="#888888"
-                android:paddingHorizontal="8dp"/>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"
-                android:background="#CCCCCC"/>
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/new_to_cordicart" />
+            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" android:background="@color/cc_line" />
         </LinearLayout>
 
-        <!-- 6-Digit OTP -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="6-Digit OTP Verification"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:layout_marginBottom="8dp"/>
-
-        <EditText
-            android:id="@+id/otpInput"
-            android:layout_width="200dp"
-            android:layout_height="48dp"
-            android:hint="123456"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.3"
-            android:inputType="number"
-            android:maxLength="6"
-            android:background="@drawable/edittext_border"
-            android:layout_marginBottom="6dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enter the OTP sent to your UC email"
-            android:textSize="12sp"
-            android:textColor="#888888"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Verify Button -->
         <Button
-            android:id="@+id/verifyButton"
+            android:id="@+id/btnCreateAccount"
+            style="@style/CC.Button.Outline"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Verify Student ID"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:backgroundTint="#2D2D2D"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Result/Error Text -->
-        <TextView
-            android:id="@+id/resultText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="13sp"
-            android:textColor="#FF0000"
-            android:layout_marginBottom="12dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Having trouble verifying? Contact support"
-            android:textSize="12sp"
-            android:textColor="#555555"
-            android:padding="8dp"/>
-
+            android:text="@string/create_account" />
     </LinearLayout>
 </ScrollView>

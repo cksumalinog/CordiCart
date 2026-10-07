@@ -2,4 +2,23 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- CordiCart palette (matches the design canvas) -->
+    <color name="cc_pine">#1F4D3A</color>        <!-- primary: main buttons, prices, logo green -->
+    <color name="cc_pine_dark">#163A2B</color>   <!-- pressed state -->
+    <color name="cc_pine_tint">#E3EDE7</color>   <!-- selected tiles, image areas -->
+    <color name="cc_amber">#F4C76A</color>       <!-- accent: Verify, + Post, SDG label -->
+    <color name="cc_amber_dark">#8A5A12</color>  <!-- "or trade" / "Trade only" text -->
+    <color name="cc_amber_tint">#F5E7CC</color>
+    <color name="cc_blue">#33456B</color>
+    <color name="cc_blue_tint">#E4E8F1</color>
+    <color name="cc_ink">#1B2420</color>         <!-- main text -->
+    <color name="cc_muted">#5E6660</color>       <!-- secondary text -->
+    <color name="cc_hint">#6B716C</color>        <!-- input hints -->
+    <color name="cc_bg">#F6F4EE</color>          <!-- screen background -->
+    <color name="cc_card">#FFFFFF</color>
+    <color name="cc_line">#E2DED3</color>
+    <color name="cc_input_line">#D6D1C4</color>
+    <color name="cc_error">#9A2A1C</color>
+    <color name="cc_error_bg">#FBE9E7</color>
 </resources>
