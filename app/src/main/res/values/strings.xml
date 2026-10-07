@@ -1,21 +1,107 @@
 <resources>
     <string name="app_name">CordiCart</string>
-    <string name="send_code">Send Code</string>
-    <string name="error_empty_email">Error: Please enter an email address.</string>
-    <string name="verification_success">Verification Successful! Welcome to CordiCart.</string>
-    <string name="error_invalid_email">Access Denied: Only @students.uc-bcf.edu.ph emails are allowed.</string>
-    <string name="error_empty_name">Error: Please enter your full name.</string>
-    <string name="error_invalid_otp">Error: Please enter the 6-digit code.</string>
-    <string name="error_short_password">Error: Password must be at least 8 characters.</string>
-    <string name="error_wrong_password">Error: Incorrect password for this account.</string>
 
+    <!-- Log in -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Log in with your UC student account to buy, sell, and trade on campus.</string>
+    <string name="label_email">UC student email</string>
+    <string name="label_password">Password</string>
+    <string name="hint_email">username@students.uc-bcf.edu.ph</string>
+    <string name="hint_password">Your password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="log_in">Log in</string>
+    <string name="new_to_cordicart">New to CordiCart?</string>
+    <string name="create_account">Create an account</string>
+
+    <!-- Create account -->
+    <string name="step_1_of_2">Step 1 of 2</string>
+    <string name="step_2_of_2">Step 2 of 2</string>
+    <string name="register_title">Create your account</string>
+    <string name="register_subtitle">CordiCart is only for University of the Cordilleras students. We\'ll send a code to your UC email to confirm it\'s you.</string>
+    <string name="label_full_name">Full name</string>
+    <string name="hint_full_name">e.g. Juan Dela Cruz</string>
+    <string name="label_department">College</string>
+    <string name="email_rule">Only @students.uc-bcf.edu.ph addresses can join.</string>
+    <string name="hint_new_password">At least 8 characters</string>
+    <string name="label_confirm_password">Confirm password</string>
+    <string name="hint_confirm_password">Type it again</string>
+    <string name="continue_label">Continue</string>
+    <string name="have_account">Already have an account? <b>Log in</b></string>
+
+    <!-- Verify email -->
+    <string name="verify_title">Check your UC email</string>
+    <string name="verify_sent_to">We sent a 6-digit code to</string>
+    <string name="code_expires">Code expires in 5 minutes</string>
+    <string name="resend_code">Resend code</string>
+    <string name="verify_student_id">Verify student ID</string>
+    <string name="wrong_email">Wrong email? <b>Change it</b></string>
+
+    <!-- Dashboard -->
+    <string name="search_hint">Search course code or item, e.g. MATH 101</string>
+    <string name="sdg_label">SDG 12 · KEEP IT IN THE LOOP</string>
+    <string name="sdg_title">Done with last term\'s books? Pass them on.</string>
+    <string name="sell_now">Sell now</string>
+    <string name="fresh_on_campus">Fresh on campus</string>
+    <string name="newest_first">Newest first</string>
+    <string name="empty_title">No listings here yet</string>
+    <string name="empty_body">Try another category or search, or be the first to sell.</string>
+    <string name="sell_an_item">Sell an item</string>
+    <string name="nav_market">Market</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_sell">Sell</string>
+    <string name="nav_messages">Messages</string>
+    <string name="nav_profile">Profile</string>
+    <string name="sign_out">Sign out</string>
+    <string name="close">Close</string>
+
+    <!-- Post an item -->
+    <string name="post_title">Post an item</string>
+    <string name="photos">Photos</string>
+    <string name="photos_caption">Up to 3 · first photo is the cover</string>
+    <string name="add_photo">Add photo</string>
+    <string name="photos_hint">Take a photo or pick from your gallery. Show any wear or highlights.</string>
+    <string name="label_item_title">Item title</string>
+    <string name="hint_item_title">e.g. Calculus 1 Textbook</string>
+    <string name="label_category">Category</string>
+    <string name="label_course_code">Course code or college</string>
+    <string name="hint_course_code">e.g. MATH 101 or CITCS</string>
+    <string name="label_condition">Condition</string>
+    <string name="label_price">Price</string>
+    <string name="hint_price">e.g. 250</string>
+    <string name="open_to_trade">Open to trade</string>
+    <string name="open_to_trade_hint">Buyers can offer an item instead of cash</string>
+    <string name="label_description">Description (optional)</string>
+    <string name="hint_description">e.g. Has some highlights in chapters 1 to 3</string>
+    <string name="publish_listing">Publish listing</string>
+
+    <!-- Listing details -->
+    <string name="description">Description</string>
+    <string name="message_seller">Message seller</string>
+    <string name="verified_student">Verified UC student</string>
+
+    <!-- Messages -->
+    <string name="error_empty_email">Please enter your UC email.</string>
+    <string name="error_invalid_email">Only @students.uc-bcf.edu.ph emails are allowed.</string>
+    <string name="error_empty_name">Please enter your full name.</string>
+    <string name="error_invalid_otp">Please enter all 6 digits of the code.</string>
+    <string name="error_short_password">Password must be at least 8 characters.</string>
+    <string name="error_password_mismatch">Passwords do not match.</string>
+    <string name="error_wrong_login">Incorrect email or password.</string>
+    <string name="error_email_taken">This email already has an account. Log in instead.</string>
+    <string name="verification_success">Verification successful! Welcome to CordiCart.</string>
+    <string name="coming_soon">%1$s is coming in the next update.</string>
+
+    <!-- University of the Cordilleras colleges -->
     <string-array name="department_options">
-        <item>CITCS</item>
-        <item>CEA</item>
-        <item>CBA</item>
-        <item>CAS</item>
-        <item>CHS</item>
-        <item>CCJE</item>
         <item>COA</item>
+        <item>CAS</item>
+        <item>CBA</item>
+        <item>CCJE</item>
+        <item>CAFA</item>
+        <item>CHTM</item>
+        <item>CITCS</item>
+        <item>COL</item>
+        <item>CTE</item>
+        <item>CONAHS</item>
     </string-array>
 </resources>

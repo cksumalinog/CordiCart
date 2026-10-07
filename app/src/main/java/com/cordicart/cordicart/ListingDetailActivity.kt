@@ -1,22 +1,27 @@
 package com.cordicart.cordicart
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DateFormat
 
-/** Full details of one listing. "Message Seller" will become the entry point to chat. */
+/** Screen 6 · Listing details. "Message seller" will become the entry point to chat. */
 class ListingDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listing_detail)
-        findViewById<TextView>(R.id.btnBack).setOnClickListener { finish() }
+        findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
+        val save = View.OnClickListener { Ui.comingSoon(this, "Saved items") }
+        findViewById<View>(R.id.btnSave).setOnClickListener(save)
+        findViewById<View>(R.id.btnSaveTop).setOnClickListener(save)
 
         val listingId = intent.getStringExtra(EXTRA_LISTING_ID)
         if (listingId == null) {
@@ -43,17 +48,25 @@ class ListingDetailActivity : AppCompatActivity() {
     }
 
     private fun bind(item: MarketItem) {
-        findViewById<TextView>(R.id.txtImageLabel).text = item.imageLabel
-        findViewById<TextView>(R.id.txtTitle).text = item.title
-        findViewById<TextView>(R.id.txtPrice).text = item.displayPrice
+        val info = Categories.info(item.category)
+        findViewById<View>(R.id.imageArea).setBackgroundColor(ContextCompat.getColor(this, info.tileColor))
+        findViewById<ImageView>(R.id.imgCategory).apply {
+            setImageResource(info.icon)
+            imageTintList = ColorStateList.valueOf(ContextCompat.getColor(context, info.iconColor))
+        }
+
         findViewById<TextView>(R.id.txtCourseTag).text = item.courseCode
         findViewById<TextView>(R.id.txtConditionTag).text = item.condition
         findViewById<TextView>(R.id.txtCategory).text = item.category
+        findViewById<TextView>(R.id.txtTitle).text = item.title
+        findViewById<TextView>(R.id.txtPrice).text = Ui.priceText(this, item)
         findViewById<TextView>(R.id.txtDescription).text =
             item.description.ifEmpty { "No description provided." }
 
-        val dept = if (item.sellerDept.isEmpty()) "" else " · ${item.sellerDept}"
-        findViewById<TextView>(R.id.txtSeller).text = item.sellerName + dept
+        findViewById<TextView>(R.id.txtSellerAvatar).text = Ui.initials(item.sellerName)
+        findViewById<TextView>(R.id.txtSeller).text = item.sellerName
+        findViewById<TextView>(R.id.txtSellerDept).text =
+            listOf(item.sellerDept, getString(R.string.verified_student)).filter { it.isNotBlank() }.joinToString(" · ")
 
         item.createdAt?.let { date ->
             findViewById<TextView>(R.id.txtPosted).text =
@@ -61,26 +74,26 @@ class ListingDetailActivity : AppCompatActivity() {
         }
 
         val myUid = FirebaseAuth.getInstance().currentUser?.uid
-        val messageButton = findViewById<Button>(R.id.btnMessageSeller)
+        val messageButton = findViewById<View>(R.id.btnMessageSeller)
+        val saveButton = findViewById<View>(R.id.btnSave)
         val note = findViewById<TextView>(R.id.txtOwnerNote)
 
         when {
             item.isOwnedBy(myUid) -> {
                 // You can't message yourself about your own item.
                 messageButton.visibility = View.GONE
+                saveButton.visibility = View.GONE
                 note.visibility = View.VISIBLE
-                note.text = "This is your listing."
+                note.text = "This is your listing"
             }
             !item.isAvailable -> {
-                messageButton.isEnabled = false
+                messageButton.visibility = View.GONE
                 note.visibility = View.VISIBLE
-                note.text = "This item has already been sold."
+                note.text = "This item has been sold"
             }
             else -> messageButton.setOnClickListener {
                 Toast.makeText(
-                    this,
-                    "Chat with ${item.sellerName} is coming in the next feature.",
-                    Toast.LENGTH_SHORT
+                    this, "Chat with ${item.sellerName} is coming in the next update.", Toast.LENGTH_SHORT
                 ).show()
             }
         }

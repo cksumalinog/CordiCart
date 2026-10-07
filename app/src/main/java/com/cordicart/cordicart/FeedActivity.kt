@@ -1,37 +1,41 @@
 package com.cordicart.cordicart
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
+import android.view.View
+import android.widget.Button
 import android.widget.EditText
-import android.widget.GridView
-import android.widget.Spinner
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import java.util.Calendar
 
+/** Screen 4 · Marketplace dashboard, the app's main screen. */
 class FeedActivity : AppCompatActivity() {
 
     private val repository = MarketRepository()
     private val allItems = mutableListOf<MarketItem>()       // everything from Firestore
     private val displayList = mutableListOf<MarketItem>()    // what the grid shows
     private lateinit var adapter: MarketItemAdapter
+    private lateinit var grid: ExpandedGridView
+    private lateinit var emptyView: View
+    private lateinit var sectionTitle: TextView
     private var listingsRegistration: ListenerRegistration? = null
+    private var loaded = false
 
     // The current filter state. Both are applied together every time.
     private var selectedCategory = MarketItem.CATEGORY_ALL
     private var searchQuery = ""
-
     private lateinit var chips: List<Pair<TextView, String>>
 
     private var user: FirebaseUser? = null
@@ -40,20 +44,28 @@ class FeedActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            goToLogin()
+            Ui.openFresh(this, MainActivity::class.java)
             return
         }
         setContentView(R.layout.activity_feed)
 
+        // Greeting changes with the time of day
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        findViewById<TextView>(R.id.txtGreeting).text = when {
+            hour < 12 -> "Good morning,"
+            hour < 18 -> "Good afternoon,"
+            else -> "Good evening,"
+        }
+
         // Grid of listing cards
-        val itemGridView = findViewById<GridView>(R.id.itemGridView)
+        grid = findViewById(R.id.itemGridView)
+        emptyView = findViewById(R.id.emptyView)
+        sectionTitle = findViewById(R.id.txtSectionTitle)
         adapter = MarketItemAdapter(this, displayList)
-        itemGridView.adapter = adapter
-        itemGridView.emptyView = findViewById(R.id.txtEmpty)
-        itemGridView.setOnItemClickListener { _, _, position, _ ->
+        grid.adapter = adapter
+        grid.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, ListingDetailActivity::class.java)
             intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, displayList[position].id)
             startActivity(intent)
@@ -62,9 +74,12 @@ class FeedActivity : AppCompatActivity() {
         // Category chips
         chips = listOf(
             findViewById<TextView>(R.id.chipAll) to MarketItem.CATEGORY_ALL,
-            findViewById<TextView>(R.id.chipTextbooks) to "Textbooks",
-            findViewById<TextView>(R.id.chipUniforms) to "Uniforms",
-            findViewById<TextView>(R.id.chipDrafting) to "Drafting & Lab Gear"
+            findViewById<TextView>(R.id.chipTextbooks) to Categories.TEXTBOOKS,
+            findViewById<TextView>(R.id.chipUniforms) to Categories.UNIFORMS,
+            findViewById<TextView>(R.id.chipDrafting) to Categories.DRAFTING,
+            findViewById<TextView>(R.id.chipLab) to Categories.LAB,
+            findViewById<TextView>(R.id.chipGadgets) to Categories.GADGETS,
+            findViewById<TextView>(R.id.chipOthers) to Categories.OTHERS
         )
         for ((chip, category) in chips) {
             chip.setOnClickListener {
@@ -81,11 +96,22 @@ class FeedActivity : AppCompatActivity() {
             applyFilters()
         }
 
-        findViewById<TextView>(R.id.fabPostItem).setOnClickListener { showCreateListingDialog() }
-        findViewById<TextView>(R.id.btnProfileHeader).setOnClickListener { showProfileDialog() }
-        findViewById<TextView>(R.id.btnMessages).setOnClickListener {
-            Toast.makeText(this, "In-app chat is coming in the next feature.", Toast.LENGTH_SHORT).show()
+        // Posting
+        val openPost = View.OnClickListener { startActivity(Intent(this, PostItemActivity::class.java)) }
+        findViewById<View>(R.id.fabPostItem).setOnClickListener(openPost)
+        findViewById<View>(R.id.btnSellNow).setOnClickListener(openPost)
+        findViewById<View>(R.id.btnEmptySell).setOnClickListener(openPost)
+
+        // Profile and placeholders
+        findViewById<View>(R.id.txtAvatar).setOnClickListener { showProfileSheet() }
+        findViewById<View>(R.id.navProfile).setOnClickListener { showProfileSheet() }
+        findViewById<View>(R.id.navMarket).setOnClickListener {
+            findViewById<ScrollView>(R.id.feedScroll).smoothScrollTo(0, 0)
         }
+        findViewById<View>(R.id.btnNotify).setOnClickListener { Ui.comingSoon(this, "Notifications") }
+        findViewById<View>(R.id.btnFilter).setOnClickListener { Ui.comingSoon(this, "More filters") }
+        findViewById<View>(R.id.navSaved).setOnClickListener { Ui.comingSoon(this, "Saved items") }
+        findViewById<View>(R.id.navMessages).setOnClickListener { Ui.comingSoon(this, "In-app chat") }
 
         loadMyProfile()
     }
@@ -95,6 +121,7 @@ class FeedActivity : AppCompatActivity() {
         if (user == null) return
         listingsRegistration = repository.listenToAvailableListings(
             onListings = { items ->
+                loaded = true
                 allItems.clear()
                 allItems.addAll(items)
                 applyFilters()
@@ -116,141 +143,59 @@ class FeedActivity : AppCompatActivity() {
         displayList.clear()
         displayList.addAll(MarketRepository.filter(allItems, selectedCategory, searchQuery))
         adapter.notifyDataSetChanged()
+
+        val empty = loaded && displayList.isEmpty()
+        emptyView.visibility = if (empty) View.VISIBLE else View.GONE
+        grid.visibility = if (empty) View.GONE else View.VISIBLE
+        sectionTitle.text =
+            if (selectedCategory == MarketItem.CATEGORY_ALL) getString(R.string.fresh_on_campus) else selectedCategory
     }
 
     private fun updateChipStyles() {
+        val white = ContextCompat.getColor(this, R.color.white)
+        val ink = ContextCompat.getColor(this, R.color.cc_ink)
         for ((chip, category) in chips) {
             val selected = category == selectedCategory
-            chip.setTypeface(null, if (selected) Typeface.BOLD else Typeface.NORMAL)
-            chip.setTextColor(if (selected) Color.BLACK else Color.parseColor("#888888"))
+            chip.setBackgroundResource(if (selected) R.drawable.bg_chip_selected else R.drawable.bg_chip)
+            chip.setTextColor(if (selected) white else ink)
+            chip.compoundDrawableTintList = ColorStateList.valueOf(if (selected) white else ink)
+            chip.isSelected = selected
         }
     }
 
-    /** Loads the seller name/department used when posting, and blocks unverified users. */
+    /** Loads the student's name and college, and sends unverified students back to verification. */
     private fun loadMyProfile() {
         val uid = user?.uid ?: return
         FirebaseFirestore.getInstance().collection("users").document(uid).get()
             .addOnSuccessListener { doc ->
+                if (isFinishing) return@addOnSuccessListener
                 if (!doc.exists() || doc.getBoolean("verified") != true) {
-                    goToLogin()   // not verified: back to the verification screen
+                    Ui.openFresh(this, VerifyEmailActivity::class.java)
                     return@addOnSuccessListener
                 }
                 doc.getString("displayName")?.takeIf { it.isNotBlank() }?.let { myName = it }
                 doc.getString("department")?.let { myDept = it }
+                findViewById<TextView>(R.id.txtName).text = myName.substringBefore(" ")
+                findViewById<TextView>(R.id.txtAvatar).text = Ui.initials(myName)
             }
     }
 
-    // ------------------------------------------------------------------ Post item
-
-    private fun showCreateListingDialog() {
-        val me = user ?: return
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_create_listing, null)
-
-        val editTitle = dialogView.findViewById<EditText>(R.id.editTitle)
-        val spinnerCategory = dialogView.findViewById<Spinner>(R.id.spinnerCategory)
-        val editTag = dialogView.findViewById<EditText>(R.id.editTag)
-        val spinnerCondition = dialogView.findViewById<Spinner>(R.id.spinnerCondition)
-        val editPrice = dialogView.findViewById<EditText>(R.id.editPrice)
-        val checkTrade = dialogView.findViewById<CheckBox>(R.id.checkTrade)
-        val editDescription = dialogView.findViewById<EditText>(R.id.editDescription)
-
-        spinnerCategory.adapter = ArrayAdapter(
-            this, android.R.layout.simple_spinner_dropdown_item,
-            listOf("Textbooks", "Uniforms", "Drafting & Lab Gear")
-        )
-        spinnerCondition.adapter = ArrayAdapter(
-            this, android.R.layout.simple_spinner_dropdown_item,
-            listOf("Like New", "Gently Used", "Used")
-        )
-
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
-            .setPositiveButton("Publish Listing", null)   // click handled below
-            .setNegativeButton("Cancel", null)
-            .create()
-
-        // Overriding the button AFTER the dialog is shown keeps it open when input is
-        // invalid, so the user doesn't lose what they typed.
-        dialog.setOnShowListener {
-            val publish = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-            publish.setOnClickListener {
-                val title = editTitle.text.toString().trim()
-                val priceText = editPrice.text.toString().trim()
-                val openToTrade = checkTrade.isChecked
-
-                if (title.isEmpty()) {
-                    editTitle.error = "Title cannot be empty"
-                    return@setOnClickListener
-                }
-
-                var price: Double? = null
-                if (priceText.isNotEmpty()) {
-                    price = priceText.toDoubleOrNull()
-                    when {
-                        price == null -> { editPrice.error = "Enter a valid amount, e.g. 250"; return@setOnClickListener }
-                        price <= 0 -> { editPrice.error = "Price must be more than ₱0"; return@setOnClickListener }
-                        price > MAX_PRICE -> { editPrice.error = "Price is too high"; return@setOnClickListener }
-                    }
-                }
-                if (price == null && !openToTrade) {
-                    editPrice.error = "Enter a price or tick \"Open to trade\""
-                    return@setOnClickListener
-                }
-
-                val item = MarketItem(
-                    id = null,
-                    title = title,
-                    category = spinnerCategory.selectedItem.toString(),
-                    courseCode = MarketItem.normalizeCourseCode(editTag.text.toString()),
-                    condition = spinnerCondition.selectedItem.toString(),
-                    price = price,
-                    openToTrade = openToTrade,
-                    description = editDescription.text.toString().trim(),
-                    sellerId = me.uid,
-                    sellerName = myName,
-                    sellerDept = myDept
-                )
-
-                publish.isEnabled = false   // prevents double-posting from double taps
-                repository.addListing(
-                    item,
-                    onSuccess = {
-                        Toast.makeText(this, "Item published to CordiCart!", Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
-                        // No manual refresh needed: the live listener updates the grid.
-                    },
-                    onError = { message ->
-                        publish.isEnabled = true
-                        Toast.makeText(this, "Could not publish: $message", Toast.LENGTH_LONG).show()
-                    }
-                )
-            }
+    private fun showProfileSheet() {
+        val sheet = BottomSheetDialog(this, R.style.CC_BottomSheetDialog)
+        val view = LayoutInflater.from(this).inflate(R.layout.sheet_profile, null)
+        view.findViewById<TextView>(R.id.sheetAvatar).text = Ui.initials(myName)
+        view.findViewById<TextView>(R.id.sheetName).text = myName
+        view.findViewById<TextView>(R.id.sheetDept).apply {
+            text = myDept
+            visibility = if (myDept.isEmpty()) View.GONE else View.VISIBLE
         }
-        dialog.show()
-    }
-
-    // ------------------------------------------------------------------ Profile / sign out
-
-    private fun showProfileDialog() {
-        AlertDialog.Builder(this)
-            .setTitle(myName)
-            .setMessage("Department: ${myDept.ifEmpty { "-" }}\nEmail: ${user?.email}")
-            .setPositiveButton("Sign out") { _, _ ->
-                FirebaseAuth.getInstance().signOut()
-                goToLogin()
-            }
-            .setNegativeButton("Close", null)
-            .show()
-    }
-
-    private fun goToLogin() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
-        finish()
-    }
-
-    companion object {
-        private const val MAX_PRICE = 100_000.0
+        view.findViewById<TextView>(R.id.sheetEmail).text = user?.email
+        view.findViewById<Button>(R.id.btnSignOut).setOnClickListener {
+            sheet.dismiss()
+            FirebaseAuth.getInstance().signOut()
+            Ui.openFresh(this, MainActivity::class.java)
+        }
+        sheet.setContentView(view)
+        sheet.show()
     }
 }

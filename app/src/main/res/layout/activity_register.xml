@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Screen 2 · Create account -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cc_bg"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="28dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginStart="-12dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                app:tint="@color/cc_ink"
+                android:contentDescription="Back" />
+
+            <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+
+            <TextView
+                style="@style/CC.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/step_1_of_2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="6dp" android:background="@drawable/bg_progress_on" />
+            <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_progress_off" />
+        </LinearLayout>
+
+        <TextView style="@style/CC.Heading.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/register_title" />
+        <TextView style="@style/CC.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:layout_marginBottom="20dp" android:text="@string/register_subtitle" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/label_full_name" />
+        <EditText
+            android:id="@+id/nameInput"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:hint="@string/hint_full_name"
+            android:inputType="textPersonName|textCapWords"
+            android:autofillHints="name" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/label_department" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_input">
+
+            <Spinner
+                android:id="@+id/departmentSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:paddingStart="4dp"
+                android:paddingEnd="40dp"
+                android:entries="@array/department_options" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="14dp"
+                android:src="@drawable/ic_chevron_down"
+                app:tint="@color/cc_muted"
+                android:importantForAccessibility="no" />
+        </FrameLayout>
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/label_email" />
+        <EditText
+            android:id="@+id/emailInput"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:autofillHints="emailAddress" />
+        <TextView style="@style/CC.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/email_rule" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/label_password" />
+        <EditText
+            android:id="@+id/passwordInput"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:hint="@string/hint_new_password"
+            android:inputType="textPassword"
+            android:autofillHints="newPassword" />
+
+        <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="@string/label_confirm_password" />
+        <EditText
+            android:id="@+id/confirmInput"
+            style="@style/CC.Input"
+            android:layout_width="match_parent"
+            android:hint="@string/hint_confirm_password"
+            android:inputType="textPassword"
+            android:autofillHints="newPassword" />
+
+        <include
+            android:id="@+id/msgBox"
+            layout="@layout/layout_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="24dp" />
+
+        <Button
+            android:id="@+id/btnContinue"
+            style="@style/CC.Button"
+            android:layout_width="match_parent"
+            android:text="@string/continue_label" />
+
+        <TextView
+            android:id="@+id/txtGoLogin"
+            style="@style/CC.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:text="@string/have_account" />
+    </LinearLayout>
+</ScrollView>
