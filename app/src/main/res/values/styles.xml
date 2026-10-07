@@ -2,7 +2,7 @@
 <resources>
     <!-- Headings. FONT (headings): change sans-serif to @font/bricolage_grotesque -->
     <style name="CC.Heading" parent="">
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@font/bricolage_grotesque_bold</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/cc_ink</item>
     </style>
