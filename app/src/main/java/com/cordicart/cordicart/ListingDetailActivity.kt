@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.DateFormat
 
-/** Screen 6 · Listing details. "Message seller" will become the entry point to chat. */
+/** Screen 6 · Listing details. "Message seller" opens the chat with the seller. */
 class ListingDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,9 +92,8 @@ class ListingDetailActivity : AppCompatActivity() {
                 note.text = "This item has been sold"
             }
             else -> messageButton.setOnClickListener {
-                Toast.makeText(
-                    this, "Chat with ${item.sellerName} is coming in the next update.", Toast.LENGTH_SHORT
-                ).show()
+                val id = item.id ?: return@setOnClickListener
+                ChatActivity.openForListing(this, id, myUid ?: return@setOnClickListener)
             }
         }
     }

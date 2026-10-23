@@ -111,7 +111,9 @@ class FeedActivity : AppCompatActivity() {
         findViewById<View>(R.id.btnNotify).setOnClickListener { Ui.comingSoon(this, "Notifications") }
         findViewById<View>(R.id.btnFilter).setOnClickListener { Ui.comingSoon(this, "More filters") }
         findViewById<View>(R.id.navSaved).setOnClickListener { Ui.comingSoon(this, "Saved items") }
-        findViewById<View>(R.id.navMessages).setOnClickListener { Ui.comingSoon(this, "In-app chat") }
+        findViewById<View>(R.id.navMessages).setOnClickListener {
+            startActivity(Intent(this, ChatListActivity::class.java))
+        }
 
         loadMyProfile()
     }
