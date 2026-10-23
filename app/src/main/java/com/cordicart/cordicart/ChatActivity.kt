@@ -125,6 +125,7 @@ class ChatActivity : AppCompatActivity() {
                 val item = MarketItem.fromDocument(doc)
                 if (item == null) { fail("This listing no longer exists."); return@addOnSuccessListener }
                 if (item.isOwnedBy(myUid)) { fail("You can't message yourself about your own item."); return@addOnSuccessListener }
+                if (!item.isAvailable) { fail("This item has already been sold."); return@addOnSuccessListener }
 
                 // Your own name, so the seller knows who is messaging.
                 db.collection("users").document(myUid).get()

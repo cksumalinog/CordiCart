@@ -24,6 +24,14 @@ data class MarketItem(
 
     val isAvailable: Boolean get() = status == STATUS_AVAILABLE
 
+    /**
+     * Everything search looks at, squashed into one lowercase string with no spaces.
+     * Built once per item (not on every keystroke), so searching stays fast with many listings.
+     */
+    private val searchKey: String by lazy {
+        listOf(title, courseCode, category, sellerDept).joinToString("|") { compact(it) }
+    }
+
     fun isOwnedBy(uid: String?): Boolean = uid != null && uid == sellerId
 
     /** Plain-text price, used for accessibility labels. Screens use Ui.priceText for the styled version. */
@@ -42,10 +50,7 @@ data class MarketItem(
         val q = compact(query)
         if (q.isEmpty()) return true
         // Spaces are ignored, so "math101" finds "MATH 101".
-        return compact(title).contains(q) ||
-            compact(courseCode).contains(q) ||
-            compact(category).contains(q) ||
-            compact(sellerDept).contains(q)
+        return searchKey.contains(q)
     }
 
     fun toMap(): Map<String, Any?> = mapOf(
@@ -75,8 +80,8 @@ data class MarketItem(
          */
         fun normalizeCourseCode(raw: String?): String {
             if (raw == null) return DEFAULT_COURSE_CODE
-            var code = raw.trim().uppercase(Locale.ROOT).replace(Regex("\\s+"), " ")
-            code = code.replace(Regex("([A-Z])\\s*(\\d)"), "\$1 \$2")   // space between letters and numbers
+            var code = raw.trim().uppercase(Locale.ROOT).replace(WHITESPACE, " ")
+            code = code.replace(LETTER_THEN_DIGIT, "\$1 \$2")   // space between letters and numbers
             return code.ifEmpty { DEFAULT_COURSE_CODE }
         }
 
@@ -114,7 +119,11 @@ data class MarketItem(
         private fun String?.orDefault(fallback: String): String =
             if (this.isNullOrBlank()) fallback else this
 
+        // Compiled once and reused. Building a Regex is slow, and search runs on every keystroke.
+        private val WHITESPACE = Regex("\\s+")
+        private val LETTER_THEN_DIGIT = Regex("([A-Z])\\s*(\\d)")
+
         private fun compact(s: String): String =
-            s.replace(Regex("\\s+"), "").lowercase(Locale.ROOT)
+            s.replace(WHITESPACE, "").lowercase(Locale.ROOT)
     }
 }

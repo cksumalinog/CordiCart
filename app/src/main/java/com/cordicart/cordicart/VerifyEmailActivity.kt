@@ -183,6 +183,7 @@ class VerifyEmailActivity : AppCompatActivity() {
 
     /** Back: sign out and return to Log in. The student can finish verifying later by logging in. */
     private fun leave() {
+        ChatNotifier.stop()
         auth.signOut()
         Ui.openFresh(this, MainActivity::class.java)
     }
@@ -190,7 +191,21 @@ class VerifyEmailActivity : AppCompatActivity() {
     /** "Wrong email? Change it": removes this unverified account and starts sign-up again. */
     private fun changeEmail() {
         val current = user ?: return
-        current.delete().addOnCompleteListener {
+        current.delete().addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                // Firebase only allows deleting an account soon after logging in.
+                // The account still exists, so the email can't be registered again yet.
+                Toast.makeText(
+                    this,
+                    "Couldn't remove this account. Log in again with it, then tap \"Change it\" right away.",
+                    Toast.LENGTH_LONG
+                ).show()
+                ChatNotifier.stop()
+                auth.signOut()
+                Ui.openFresh(this, MainActivity::class.java)
+                return@addOnCompleteListener
+            }
+            ChatNotifier.stop()
             auth.signOut()
             val login = Intent(this, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

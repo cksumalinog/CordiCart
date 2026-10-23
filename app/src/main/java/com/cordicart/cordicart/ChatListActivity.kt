@@ -44,7 +44,8 @@ class ChatListActivity : AppCompatActivity() {
         list.adapter = adapter
         list.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, ChatActivity::class.java)
-            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, chats[position].id)
+            val chat = chats.getOrNull(position) ?: return@setOnItemClickListener
+            intent.putExtra(ChatActivity.EXTRA_CHAT_ID, chat.id)
             startActivity(intent)
         }
 

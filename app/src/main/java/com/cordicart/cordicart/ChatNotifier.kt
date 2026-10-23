@@ -54,7 +54,12 @@ object ChatNotifier {
         registration = repository.listenToMyChats(
             uid,
             onChats = { chats -> onChatsChanged(chats) },
-            onError = { /* The Messages screen shows load errors; the badge just stays as it is. */ }
+            onError = {
+                // Firestore closes a listener after an error, so forget it. The next start() makes a new one.
+                registration?.remove()
+                registration = null
+                myUid = null
+            }
         )
     }
 
