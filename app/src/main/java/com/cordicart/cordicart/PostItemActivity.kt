@@ -76,13 +76,23 @@ class PostItemActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnPublish).setOnClickListener { publish(user.uid) }
+        val publishButton = findViewById<Button>(R.id.btnPublish)
+        publishButton.setOnClickListener { publish(user.uid) }
 
-        // Seller name and college come from the student's profile
+        // Seller name and college come from the student's profile.
+        // Publish stays off until it loads, so the listing never shows a placeholder name.
+        publishButton.isEnabled = false
         FirebaseFirestore.getInstance().collection("users").document(user.uid).get()
             .addOnSuccessListener { doc ->
+                if (isFinishing || isDestroyed) return@addOnSuccessListener
                 doc.getString("displayName")?.takeIf { it.isNotBlank() }?.let { myName = it }
                 doc.getString("department")?.let { myDept = it }
+                publishButton.isEnabled = true
+            }
+            .addOnFailureListener { e ->
+                if (isFinishing || isDestroyed) return@addOnFailureListener
+                Toast.makeText(this, "Could not load your profile: ${e.message}", Toast.LENGTH_LONG).show()
+                finish()
             }
     }
 

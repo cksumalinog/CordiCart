@@ -210,15 +210,18 @@ These are known limitations of the current version:
 - **Demo mode:** without SMTP credentials, the code is shown on screen instead of emailed.
 - **Credentials in the app:** when email sending is enabled, the Gmail app password is stored inside the app.
   A production version would send emails from a server, such as Cloud Functions.
-- **Client-side verification:** the database rules let students update their own profile, so a modified app
-  could set its own `verified` flag. A server-side check would close this.
+- **Client-side verification:** the 6-digit code is created and checked on the phone, so a modified app could
+  mark itself verified (for example by reading its own stored code hash and trying all 1,000,000 codes).
+  The rules now lock the uid and email, but only a server-side check closes this fully: Firebase's built-in
+  email verification link (free) or a Cloud Function (Blaze plan).
 - **Device clock:** code expiry is checked against the phone's clock.
 - **Resend timer:** the 60-second resend cooldown restarts if the screen is rotated or the app is reopened.
 - **Department search:** searching a college name also matches listings posted by students from that college.
-- **Seller name timing:** a listing posted the instant the screen opens may show the default seller name.
-- **Not built yet:** photo upload, saved items, notifications, advanced filters, and password reset
+- **Notifications only while the app is running:** fully closed apps would need Cloud Messaging (Blaze plan).
+- **Not built yet:** photo upload, saved items, advanced filters, and password reset
   show a "coming soon" message.
-- **Scale:** the feed loads all listings and filters them on the phone, which is fine at campus scale.
+- **Scale:** the feed downloads all *available* listings and filters them on the phone, showing 30 at a time.
+  This is fine at campus scale; thousands of listings would need server-side search and paging.
 
 ---
 

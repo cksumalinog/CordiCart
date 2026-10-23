@@ -114,5 +114,6 @@
     <string name="send">Send message</string>
     <string name="suggest_available">Is this still available?</string>
     <string name="suggest_meet">Can we meet on campus?</string>
+    <string name="show_more">Show %1$d more</string>
     <string name="suggest_price">Is the price negotiable?</string>
 </resources>

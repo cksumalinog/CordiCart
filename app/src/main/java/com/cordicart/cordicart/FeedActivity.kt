@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -17,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Lifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -36,10 +39,19 @@ class FeedActivity : AppCompatActivity() {
     private lateinit var sectionTitle: TextView
     private var listingsRegistration: ListenerRegistration? = null
     private var loaded = false
+    private var verified = false   // nothing is loaded until the profile confirms the student is verified
 
     // The current filter state. Both are applied together every time.
     private var selectedCategory = MarketItem.CATEGORY_ALL
     private var searchQuery = ""
+
+    // Search waits until you pause typing, instead of re-filtering on every letter.
+    private val handler = Handler(Looper.getMainLooper())
+    private val runSearch = Runnable { resetPaging(); applyFilters() }
+
+    // The grid shows listings in pages, so a long feed doesn't build hundreds of cards at once.
+    private var shownCount = PAGE_SIZE
+    private lateinit var btnShowMore: TextView
     private lateinit var chips: List<Pair<TextView, String>>
 
     // Red badge on the Messages tab
@@ -79,7 +91,9 @@ class FeedActivity : AppCompatActivity() {
         grid.adapter = adapter
         grid.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, ListingDetailActivity::class.java)
-            intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, displayList[position].id)
+            // getOrNull: the list can change between the tap and this code (live updates).
+            val item = displayList.getOrNull(position) ?: return@setOnItemClickListener
+            intent.putExtra(ListingDetailActivity.EXTRA_LISTING_ID, item.id)
             startActivity(intent)
         }
 
@@ -95,8 +109,10 @@ class FeedActivity : AppCompatActivity() {
         )
         for ((chip, category) in chips) {
             chip.setOnClickListener {
+                if (selectedCategory == category) return@setOnClickListener
                 selectedCategory = category
                 updateChipStyles()
+                resetPaging()
                 applyFilters()
             }
         }
@@ -105,6 +121,14 @@ class FeedActivity : AppCompatActivity() {
         // Search (combined with the selected category)
         findViewById<EditText>(R.id.searchEditText).doOnTextChanged { text, _, _, _ ->
             searchQuery = text?.toString() ?: ""
+            handler.removeCallbacks(runSearch)
+            handler.postDelayed(runSearch, SEARCH_DELAY_MS)
+        }
+
+        // "Show more" adds the next page of listings
+        btnShowMore = findViewById(R.id.btnShowMore)
+        btnShowMore.setOnClickListener {
+            shownCount += PAGE_SIZE
             applyFilters()
         }
 
@@ -127,16 +151,15 @@ class FeedActivity : AppCompatActivity() {
             startActivity(Intent(this, ChatListActivity::class.java))
         }
 
-        // Unread badge + new-message notifications
+        // Unread badge (notifications start once the profile is confirmed, in loadMyProfile)
         badge = findViewById(R.id.badgeMessages)
-        user?.let { ChatNotifier.start(this, it.uid) }
         ChatNotifier.addUnreadListener(onUnreadChanged)
-        askForNotificationPermission()
 
         loadMyProfile()
     }
 
     override fun onDestroy() {
+        handler.removeCallbacks(runSearch)
         ChatNotifier.removeUnreadListener(onUnreadChanged)
         super.onDestroy()
     }
@@ -159,7 +182,12 @@ class FeedActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (user == null) return
+        if (verified) startListings()
+    }
+
+    /** Live listings. Only started for verified students, so the database never refuses it. */
+    private fun startListings() {
+        if (user == null || listingsRegistration != null) return
         listingsRegistration = repository.listenToAvailableListings(
             onListings = { items ->
                 loaded = true
@@ -180,10 +208,24 @@ class FeedActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    private fun resetPaging() {
+        shownCount = PAGE_SIZE
+    }
+
     private fun applyFilters() {
-        displayList.clear()
-        displayList.addAll(MarketRepository.filter(allItems, selectedCategory, searchQuery))
-        adapter.notifyDataSetChanged()
+        val matches = MarketRepository.filter(allItems, selectedCategory, searchQuery)
+        val page = matches.take(shownCount)
+
+        // Only rebuild the grid when something actually changed (data class == compares every field).
+        if (page != displayList) {
+            displayList.clear()
+            displayList.addAll(page)
+            adapter.notifyDataSetChanged()
+        }
+
+        val hidden = matches.size - page.size
+        btnShowMore.visibility = if (hidden > 0) View.VISIBLE else View.GONE
+        btnShowMore.text = getString(R.string.show_more, minOf(hidden, PAGE_SIZE))
 
         val empty = loaded && displayList.isEmpty()
         emptyView.visibility = if (empty) View.VISIBLE else View.GONE
@@ -216,6 +258,12 @@ class FeedActivity : AppCompatActivity() {
                 }
                 doc.getString("displayName")?.takeIf { it.isNotBlank() }?.let { myName = it }
                 doc.getString("department")?.let { myDept = it }
+
+                // Verified: now it's safe to load listings and watch for messages.
+                verified = true
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) startListings()
+                user?.let { ChatNotifier.start(this, it.uid) }
+                askForNotificationPermission()
                 findViewById<TextView>(R.id.txtName).text = myName.substringBefore(" ")
                 findViewById<TextView>(R.id.txtAvatar).text = Ui.initials(myName)
             }
@@ -239,5 +287,10 @@ class FeedActivity : AppCompatActivity() {
         }
         sheet.setContentView(view)
         sheet.show()
+    }
+
+    companion object {
+        private const val PAGE_SIZE = 30
+        private const val SEARCH_DELAY_MS = 250L
     }
 }

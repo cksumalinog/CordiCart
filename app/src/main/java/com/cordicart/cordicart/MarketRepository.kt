@@ -18,7 +18,10 @@ class MarketRepository {
         onListings: (List<MarketItem>) -> Unit,
         onError: (String) -> Unit
     ): ListenerRegistration =
-        listings.addSnapshotListener { snapshot, error ->
+        // Ask Firestore for available items only, so sold items are never downloaded.
+        // A single "equals" filter needs no extra index.
+        listings.whereEqualTo("status", MarketItem.STATUS_AVAILABLE)
+            .addSnapshotListener { snapshot, error ->
             if (error != null) {
                 onError(error.message ?: "Unknown error")
                 return@addSnapshotListener
