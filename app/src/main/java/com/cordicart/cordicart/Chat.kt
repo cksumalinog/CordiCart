@@ -19,8 +19,20 @@ data class Chat(
     val sellerName: String,
     val lastMessage: String,
     val lastSenderId: String,
-    val updatedAt: Date?
+    val updatedAt: Date?,
+    val lastRead: Map<String, Date> = emptyMap()   // when each person last opened the chat
 ) {
+
+    /**
+     * True when the other person sent the latest message and you haven't opened the chat since.
+     * Used for the badge on Messages, the dot in the Messages list, and notifications.
+     */
+    fun isUnreadFor(uid: String?): Boolean {
+        if (uid == null || lastMessage.isBlank() || lastSenderId == uid) return false
+        val sent = updatedAt ?: return true
+        val read = lastRead[uid] ?: return true
+        return sent.after(read)
+    }
 
     fun isSeller(uid: String?): Boolean = uid != null && uid == sellerId
 
@@ -36,6 +48,18 @@ data class Chat(
 
     companion object {
         fun idFor(listingId: String, buyerId: String): String = "${listingId}_$buyerId"
+
+        /** Reads the lastRead map: { uid: time }. */
+        private fun readTimes(doc: DocumentSnapshot): Map<String, Date> {
+            val raw = doc.get("lastRead", DocumentSnapshot.ServerTimestampBehavior.ESTIMATE) as? Map<*, *>
+                ?: return emptyMap()
+            val out = mutableMapOf<String, Date>()
+            for ((key, value) in raw) {
+                val time = (value as? com.google.firebase.Timestamp)?.toDate() ?: continue
+                out[key.toString()] = time
+            }
+            return out
+        }
 
         /** Builds a chat from Firestore. Returns null for malformed documents instead of crashing. */
         fun fromDocument(doc: DocumentSnapshot): Chat? {
@@ -57,7 +81,8 @@ data class Chat(
                 lastSenderId = doc.getString("lastSenderId").orEmpty(),
                 updatedAt = doc.getTimestamp(
                     "updatedAt", DocumentSnapshot.ServerTimestampBehavior.ESTIMATE
-                )?.toDate()
+                )?.toDate(),
+                lastRead = readTimes(doc)
             )
         }
     }
