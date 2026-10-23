@@ -56,6 +56,15 @@ making school supplies more affordable.
 - Course codes are standardized automatically (`math101` → `MATH 101`).
 - Listing details with seller name and college. Students can't message themselves about their own listing.
 
+### 3. In-app chat
+- **Message seller** on a listing opens a private chat between the buyer and the seller about that item.
+- Messages appear instantly on both phones (real-time Firestore listeners), newest at the bottom.
+- Quick questions for the buyer's first message: *Is this still available?*, *Can we meet on campus?*, *Is the price negotiable?*
+- **Messages** tab lists every chat you're in, as a buyer or a seller, with the latest message and time.
+- Each chat shows the listing it's about; tap it to open the item.
+- The chat is only created when the first message is sent, so no empty chats are left behind.
+- Security rules make sure only the buyer and the seller can read a chat, and that nobody can send as someone else.
+
 ---
 
 ## Screens
@@ -68,6 +77,8 @@ making school supplies more affordable.
 | 4 | Marketplace dashboard | `FeedActivity` | `activity_feed.xml`, `item_market_card.xml`, `sheet_profile.xml` |
 | 5 | Post an item | `PostItemActivity` | `activity_post_item.xml` |
 | 6 | Listing details | `ListingDetailActivity` | `activity_listing_detail.xml` |
+| 7 | Messages | `ChatListActivity` | `activity_chat_list.xml`, `item_chat.xml` |
+| 8 | Chat | `ChatActivity` | `activity_chat.xml`, `item_message.xml` |
 
 <!-- Add screenshots here, e.g.:
 <p align="center">
@@ -114,6 +125,10 @@ app/src/main/
 │   ├── FeedActivity.kt            # 4 · Marketplace dashboard
 │   ├── PostItemActivity.kt        # 5 · Post an item
 │   ├── ListingDetailActivity.kt   # 6 · Listing details
+│   ├── ChatListActivity.kt        # 7 · Messages (all your chats)
+│   ├── ChatActivity.kt            # 8 · One chat with a buyer or seller
+│   ├── Chat.kt                    # Chat and message models
+│   ├── ChatRepository.kt          # Firestore access for chats
 │   ├── AuthRouter.kt              # Sends each student to the right screen
 │   ├── OtpManager.kt              # Generates, stores (hashed), and checks codes
 │   ├── MailSender.kt / MailConfig.kt  # Optional Gmail SMTP sending
@@ -172,6 +187,12 @@ users/{uid}          uid, email, displayName, department, verified, createdAt
 otps/{uid}           codeHash, expiresAt, attempts, sentAt        (deleted after use)
 listings/{id}        title, category, courseCode, condition, price, openToTrade,
                      description, sellerId, sellerName, sellerDept, status, createdAt
+chats/{listingId}_{buyerId}
+                     listingId, listingTitle, listingCategory, listingPrice,
+                     buyerId, buyerName, sellerId, sellerName, participants,
+                     lastMessage, lastSenderId, updatedAt, createdAt
+chats/{chatId}/messages/{id}
+                     senderId, text, createdAt
 ```
 
 Security rules allow only signed-in UC student accounts. Only **verified** students can read or post listings,
@@ -192,7 +213,7 @@ These are known limitations of the current version:
 - **Resend timer:** the 60-second resend cooldown restarts if the screen is rotated or the app is reopened.
 - **Department search:** searching a college name also matches listings posted by students from that college.
 - **Seller name timing:** a listing posted the instant the screen opens may show the default seller name.
-- **Not built yet:** photo upload, saved items, in-app chat, notifications, advanced filters, and password reset
+- **Not built yet:** photo upload, saved items, notifications, advanced filters, and password reset
   show a "coming soon" message.
 - **Scale:** the feed loads all listings and filters them on the phone, which is fine at campus scale.
 
@@ -200,7 +221,7 @@ These are known limitations of the current version:
 
 ## Roadmap
 
-- [ ] In-app chat between buyers and sellers
+- [x] In-app chat between buyers and sellers
 - [ ] Seller photo uploads
 - [ ] Safe campus meetup spots and **Confirm Handoff & Mark Sold**
 - [ ] Class-break pickup scheduler

@@ -104,4 +104,15 @@
         <item>CTE</item>
         <item>CONAHS</item>
     </string-array>
+    <!-- Messages and chat -->
+    <string name="messages_title">Messages</string>
+    <string name="messages_empty_title">No messages yet</string>
+    <string name="messages_empty_body">When you message a seller, or a buyer messages you, the conversation shows up here.</string>
+    <string name="browse_market">Browse the market</string>
+    <string name="view_item">View</string>
+    <string name="hint_message">Write a message</string>
+    <string name="send">Send message</string>
+    <string name="suggest_available">Is this still available?</string>
+    <string name="suggest_meet">Can we meet on campus?</string>
+    <string name="suggest_price">Is the price negotiable?</string>
 </resources>
