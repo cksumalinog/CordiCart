@@ -52,6 +52,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textSize="11sp" />
+            <View
+                android:id="@+id/unreadDot"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_circle_amber"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout

@@ -87,10 +87,13 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        ChatNotifier.openChatId = chatId        // no notifications for the chat you're looking at
+        ChatNotifier.clearNotification(chatId)
         if (chat != null && !isNewChat) startListening()
     }
 
     override fun onStop() {
+        if (ChatNotifier.openChatId == chatId) ChatNotifier.openChatId = null
         stopListening()
         super.onStop()
     }
@@ -191,7 +194,13 @@ class ChatActivity : AppCompatActivity() {
         if (registration != null || !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return
         registration = repository.listenToMessages(
             chatId,
-            onMessages = { list -> showMessages(list) },
+            onMessages = { list ->
+                showMessages(list)
+                // You're looking at the chat, so everything in it is now read.
+                if (list.lastOrNull()?.senderId.let { it != null && it != myUid }) {
+                    repository.markRead(chatId, myUid)
+                }
+            },
             onError = { message ->
                 Toast.makeText(this, "Could not load messages: $message", Toast.LENGTH_LONG).show()
             }

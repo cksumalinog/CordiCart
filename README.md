@@ -64,6 +64,8 @@ making school supplies more affordable.
 - Each chat shows the listing it's about; tap it to open the item.
 - The chat is only created when the first message is sent, so no empty chats are left behind.
 - Security rules make sure only the buyer and the seller can read a chat, and that nobody can send as someone else.
+- **Unread indicators:** a red badge on the Messages tab counts unread chats, and unread chats show a bold preview with an amber dot.
+- **New-message notifications** while the app is open or running in the background. Tapping one opens that chat. (Notifications when the app is fully closed would need Firebase Cloud Messaging and the paid Blaze plan.)
 
 ---
 
@@ -129,6 +131,7 @@ app/src/main/
 │   ├── ChatActivity.kt            # 8 · One chat with a buyer or seller
 │   ├── Chat.kt                    # Chat and message models
 │   ├── ChatRepository.kt          # Firestore access for chats
+│   ├── ChatNotifier.kt            # Unread badge and new-message notifications
 │   ├── AuthRouter.kt              # Sends each student to the right screen
 │   ├── OtpManager.kt              # Generates, stores (hashed), and checks codes
 │   ├── MailSender.kt / MailConfig.kt  # Optional Gmail SMTP sending
@@ -190,7 +193,7 @@ listings/{id}        title, category, courseCode, condition, price, openToTrade,
 chats/{listingId}_{buyerId}
                      listingId, listingTitle, listingCategory, listingPrice,
                      buyerId, buyerName, sellerId, sellerName, participants,
-                     lastMessage, lastSenderId, updatedAt, createdAt
+                     lastMessage, lastSenderId, updatedAt, lastRead {uid: time}, createdAt
 chats/{chatId}/messages/{id}
                      senderId, text, createdAt
 ```

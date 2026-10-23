@@ -325,7 +325,28 @@
             android:id="@+id/navMessages"
             style="@style/CC.NavItem"
             android:contentDescription="Messages">
-            <ImageView style="@style/CC.NavIcon" android:src="@drawable/ic_chat" app:tint="@color/cc_muted" />
+            <!-- Icon with a red badge that counts unread chats -->
+            <FrameLayout
+                android:layout_width="34dp"
+                android:layout_height="22dp">
+                <ImageView style="@style/CC.NavIcon" android:layout_gravity="center" android:src="@drawable/ic_chat" app:tint="@color/cc_muted" />
+                <TextView
+                    android:id="@+id/badgeMessages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="-4dp"
+                    android:background="@drawable/bg_badge"
+                    android:gravity="center"
+                    android:minWidth="16dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
             <TextView style="@style/CC.NavLabel" android:text="Messages" android:textColor="@color/cc_muted" />
         </LinearLayout>
         <LinearLayout

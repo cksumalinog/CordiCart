@@ -2,6 +2,7 @@ package com.cordicart.cordicart
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 
@@ -92,13 +94,24 @@ class ChatListActivity : AppCompatActivity() {
             view.findViewById<TextView>(R.id.txtRole).text =
                 if (chat.isSeller(myUid)) "Buying from you" else "Selling"
             view.findViewById<TextView>(R.id.txtListing).text = chat.listingTitle
-            view.findViewById<TextView>(R.id.txtPreview).text = chat.preview(myUid)
+            val unread = chat.isUnreadFor(myUid)
+            view.findViewById<TextView>(R.id.txtPreview).apply {
+                text = chat.preview(myUid)
+                // Unread chats: dark bold preview and an amber dot.
+                setTextColor(ContextCompat.getColor(context, if (unread) R.color.cc_ink else R.color.cc_muted))
+                // Keep the app's font; only switch between regular and bold.
+                // The original font is remembered in the view's tag, because rows get reused.
+                val baseFont = (tag as? Typeface) ?: typeface.also { tag = it }
+                typeface = Typeface.create(baseFont, if (unread) Typeface.BOLD else Typeface.NORMAL)
+            }
+            view.findViewById<View>(R.id.unreadDot).visibility = if (unread) View.VISIBLE else View.GONE
             view.findViewById<TextView>(R.id.txtTime).text = chat.updatedAt?.let {
                 DateUtils.getRelativeTimeSpanString(
                     it.time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE
                 )
             } ?: ""
-            view.contentDescription = "Chat with $otherName about ${chat.listingTitle}"
+            view.contentDescription =
+                (if (unread) "Unread. " else "") + "Chat with $otherName about ${chat.listingTitle}"
             return view
         }
     }

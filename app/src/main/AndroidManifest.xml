@@ -4,6 +4,8 @@
 
     <!-- Needed for Firebase and for sending the OTP email -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: needed to show "new message" notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".CordiCartApp"

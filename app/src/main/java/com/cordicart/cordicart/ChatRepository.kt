@@ -103,16 +103,23 @@ class ChatRepository {
                     "sellerId" to chat.sellerId,
                     "sellerName" to chat.sellerName,
                     "participants" to listOf(chat.buyerId, chat.sellerId),
+                    "lastRead" to mapOf(senderId to FieldValue.serverTimestamp()),
                     "createdAt" to FieldValue.serverTimestamp()
                 ) + summary
             )
         } else {
-            batch.update(chatRef, summary)
+            // Sending also counts as reading, so your own chat never shows as unread.
+            batch.update(chatRef, summary + ("lastRead.$senderId" to FieldValue.serverTimestamp()))
         }
 
         batch.commit()
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e -> onError(e.message ?: "Unknown error") }
+    }
+
+    /** Marks the chat as read by you, which clears its badge, dot and notification. */
+    fun markRead(chatId: String, uid: String) {
+        chats.document(chatId).update("lastRead.$uid", FieldValue.serverTimestamp())
     }
 
     companion object {

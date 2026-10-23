@@ -1,6 +1,9 @@
 package com.cordicart.cordicart
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +13,7 @@ import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
@@ -37,6 +41,14 @@ class FeedActivity : AppCompatActivity() {
     private var selectedCategory = MarketItem.CATEGORY_ALL
     private var searchQuery = ""
     private lateinit var chips: List<Pair<TextView, String>>
+
+    // Red badge on the Messages tab
+    private lateinit var badge: TextView
+    private val onUnreadChanged: (Int) -> Unit = { count -> showBadge(count) }
+
+    // Android 13+ asks before an app may show notifications.
+    private val askNotifications =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* works either way */ }
 
     private var user: FirebaseUser? = null
     private var myName = "UC Student"
@@ -115,7 +127,34 @@ class FeedActivity : AppCompatActivity() {
             startActivity(Intent(this, ChatListActivity::class.java))
         }
 
+        // Unread badge + new-message notifications
+        badge = findViewById(R.id.badgeMessages)
+        user?.let { ChatNotifier.start(this, it.uid) }
+        ChatNotifier.addUnreadListener(onUnreadChanged)
+        askForNotificationPermission()
+
         loadMyProfile()
+    }
+
+    override fun onDestroy() {
+        ChatNotifier.removeUnreadListener(onUnreadChanged)
+        super.onDestroy()
+    }
+
+    private fun showBadge(count: Int) {
+        badge.visibility = if (count > 0) View.VISIBLE else View.GONE
+        badge.text = if (count > 9) "9+" else count.toString()
+        findViewById<View>(R.id.navMessages).contentDescription =
+            if (count > 0) "Messages, $count unread" else "Messages"
+    }
+
+    private fun askForNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     override fun onStart() {
@@ -194,6 +233,7 @@ class FeedActivity : AppCompatActivity() {
         view.findViewById<TextView>(R.id.sheetEmail).text = user?.email
         view.findViewById<Button>(R.id.btnSignOut).setOnClickListener {
             sheet.dismiss()
+            ChatNotifier.stop()
             FirebaseAuth.getInstance().signOut()
             Ui.openFresh(this, MainActivity::class.java)
         }
