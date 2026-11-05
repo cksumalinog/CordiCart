@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Filters bottom sheet: opened from the filter button next to search -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_handle" />
+
+    <TextView
+        style="@style/CC.Heading.Section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/filters_title" />
+
+    <!-- Condition -->
+    <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="@string/label_condition" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/fCondAny" style="@style/CC.Pill" android:layout_marginEnd="6dp" android:text="@string/any" />
+        <TextView android:id="@+id/fCondLikeNew" style="@style/CC.Pill" android:layout_marginEnd="6dp" android:textSize="12sp" android:text="Like New" />
+        <TextView android:id="@+id/fCondGently" style="@style/CC.Pill" android:layout_marginEnd="6dp" android:textSize="12sp" android:text="Gently Used" />
+        <TextView android:id="@+id/fCondUsed" style="@style/CC.Pill" android:text="Used" />
+    </LinearLayout>
+
+    <!-- Price range -->
+    <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="@string/label_price_range" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/fMinPrice"
+            style="@style/CC.Input"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:hint="@string/hint_min_price"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:maxLength="6" />
+        <TextView
+            style="@style/CC.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="to" />
+        <EditText
+            android:id="@+id/fMaxPrice"
+            style="@style/CC.Input"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:hint="@string/hint_max_price"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:maxLength="6" />
+    </LinearLayout>
+
+    <!-- Trade only -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView style="@style/CC.Label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="0dp" android:text="@string/trade_only_title" />
+            <TextView style="@style/CC.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/trade_only_hint" />
+        </LinearLayout>
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/fTradeOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/trade_only_title" />
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/fReset"
+            style="@style/CC.Button.Outline"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            android:text="@string/reset" />
+        <Button
+            android:id="@+id/fApply"
+            style="@style/CC.Button"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/show_results" />
+    </LinearLayout>
+</LinearLayout>

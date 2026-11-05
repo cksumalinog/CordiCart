@@ -22,6 +22,7 @@ class MarketItemAdapter(context: Context, items: MutableList<MarketItem>) :
         val title: TextView = view.findViewById(R.id.txtTitle)
         val meta: TextView = view.findViewById(R.id.txtMeta)
         val price: TextView = view.findViewById(R.id.txtPrice)
+        val sold: TextView = view.findViewById(R.id.txtSold)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -40,6 +41,8 @@ class MarketItemAdapter(context: Context, items: MutableList<MarketItem>) :
             h.title.text = item.title
             h.meta.text = listOf(item.condition, item.sellerDept).filter { it.isNotBlank() }.joinToString(" · ")
             h.price.text = Ui.priceText(context, item)
+            h.sold.visibility = if (item.isAvailable) View.GONE else View.VISIBLE
+            view.alpha = if (item.isAvailable) 1f else 0.7f
             view.contentDescription = "${item.title}, ${item.displayPrice}"
         }
         return view

@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
@@ -44,6 +45,15 @@ class FeedActivity : AppCompatActivity() {
     // The current filter state. Both are applied together every time.
     private var selectedCategory = MarketItem.CATEGORY_ALL
     private var searchQuery = ""
+
+    // Extra filters from the filter sheet. null / false = not filtering on that.
+    private var filterCondition: String? = null
+    private var filterMinPrice: Double? = null
+    private var filterMaxPrice: Double? = null
+    private var filterTradeOnly = false
+    private var filterButtonBackground: android.graphics.drawable.Drawable? = null   // original ripple
+    private val filtersActive: Boolean
+        get() = filterCondition != null || filterMinPrice != null || filterMaxPrice != null || filterTradeOnly
 
     // Search waits until you pause typing, instead of re-filtering on every letter.
     private val handler = Handler(Looper.getMainLooper())
@@ -145,8 +155,13 @@ class FeedActivity : AppCompatActivity() {
             findViewById<ScrollView>(R.id.feedScroll).smoothScrollTo(0, 0)
         }
         findViewById<View>(R.id.btnNotify).setOnClickListener { Ui.comingSoon(this, "Notifications") }
-        findViewById<View>(R.id.btnFilter).setOnClickListener { Ui.comingSoon(this, "More filters") }
-        findViewById<View>(R.id.navSaved).setOnClickListener { Ui.comingSoon(this, "Saved items") }
+        findViewById<View>(R.id.btnFilter).apply {
+            filterButtonBackground = background
+            setOnClickListener { showFilterSheet() }
+        }
+        findViewById<View>(R.id.navSaved).setOnClickListener {
+            startActivity(Intent(this, SavedActivity::class.java))
+        }
         findViewById<View>(R.id.navMessages).setOnClickListener {
             startActivity(Intent(this, ChatListActivity::class.java))
         }
@@ -214,6 +229,7 @@ class FeedActivity : AppCompatActivity() {
 
     private fun applyFilters() {
         val matches = MarketRepository.filter(allItems, selectedCategory, searchQuery)
+            .filter { passesExtraFilters(it) }
         val page = matches.take(shownCount)
 
         // Only rebuild the grid when something actually changed (data class == compares every field).
@@ -232,6 +248,86 @@ class FeedActivity : AppCompatActivity() {
         grid.visibility = if (empty) View.GONE else View.VISIBLE
         sectionTitle.text =
             if (selectedCategory == MarketItem.CATEGORY_ALL) getString(R.string.fresh_on_campus) else selectedCategory
+        if (filtersActive) sectionTitle.append(" · " + getString(R.string.filtered))
+    }
+
+    /** Condition, price range and trade-only, from the filter sheet. */
+    private fun passesExtraFilters(item: MarketItem): Boolean {
+        filterCondition?.let { if (item.condition != it) return false }
+        if (filterTradeOnly && !item.openToTrade) return false
+        if (filterMinPrice != null || filterMaxPrice != null) {
+            val price = item.price ?: return false          // trade-only items have no price to compare
+            filterMinPrice?.let { if (price < it) return false }
+            filterMaxPrice?.let { if (price > it) return false }
+        }
+        return true
+    }
+
+    private fun showFilterSheet() {
+        val sheet = BottomSheetDialog(this, R.style.CC_BottomSheetDialog)
+        val view = LayoutInflater.from(this).inflate(R.layout.sheet_filters, null)
+
+        // Condition pills (one at a time)
+        var condition = filterCondition
+        val pills = listOf(
+            view.findViewById<TextView>(R.id.fCondAny) to null,
+            view.findViewById<TextView>(R.id.fCondLikeNew) to "Like New",
+            view.findViewById<TextView>(R.id.fCondGently) to "Gently Used",
+            view.findViewById<TextView>(R.id.fCondUsed) to "Used"
+        )
+        val white = ContextCompat.getColor(this, R.color.white)
+        val ink = ContextCompat.getColor(this, R.color.cc_ink)
+        fun stylePills() {
+            for ((pill, value) in pills) {
+                val on = value == condition
+                pill.setBackgroundResource(if (on) R.drawable.bg_pill_option_selected else R.drawable.bg_pill_option)
+                pill.setTextColor(if (on) white else ink)
+                pill.isSelected = on
+            }
+        }
+        for ((pill, value) in pills) pill.setOnClickListener { condition = value; stylePills() }
+        stylePills()
+
+        val minInput = view.findViewById<EditText>(R.id.fMinPrice)
+        val maxInput = view.findViewById<EditText>(R.id.fMaxPrice)
+        val tradeSwitch = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.fTradeOnly)
+        filterMinPrice?.let { minInput.setText(it.toLong().toString()) }
+        filterMaxPrice?.let { maxInput.setText(it.toLong().toString()) }
+        tradeSwitch.isChecked = filterTradeOnly
+
+        view.findViewById<Button>(R.id.fReset).setOnClickListener {
+            condition = null
+            stylePills()
+            minInput.setText("")
+            maxInput.setText("")
+            tradeSwitch.isChecked = false
+        }
+        view.findViewById<Button>(R.id.fApply).setOnClickListener {
+            var min = minInput.text.toString().toDoubleOrNull()
+            var max = maxInput.text.toString().toDoubleOrNull()
+            if (min != null && max != null && min > max) { val t = min; min = max; max = t }   // swap if reversed
+            filterCondition = condition
+            filterMinPrice = min
+            filterMaxPrice = max
+            filterTradeOnly = tradeSwitch.isChecked
+            updateFilterButton()
+            resetPaging()
+            applyFilters()
+            sheet.dismiss()
+            if (filtersActive) Toast.makeText(this, "Filters applied", Toast.LENGTH_SHORT).show()
+        }
+
+        sheet.setContentView(view)
+        sheet.show()
+    }
+
+    /** The filter button turns amber while filters are on. */
+    private fun updateFilterButton() {
+        findViewById<ImageButton>(R.id.btnFilter).apply {
+            if (filtersActive) setBackgroundResource(R.drawable.bg_circle_amber)
+            else background = filterButtonBackground
+            contentDescription = if (filtersActive) "Filters (on)" else "Filters"
+        }
     }
 
     private fun updateChipStyles() {
@@ -279,6 +375,14 @@ class FeedActivity : AppCompatActivity() {
             visibility = if (myDept.isEmpty()) View.GONE else View.VISIBLE
         }
         view.findViewById<TextView>(R.id.sheetEmail).text = user?.email
+        view.findViewById<View>(R.id.btnMyListings).setOnClickListener {
+            sheet.dismiss()
+            startActivity(Intent(this, MyListingsActivity::class.java))
+        }
+        view.findViewById<View>(R.id.btnSavedItems).setOnClickListener {
+            sheet.dismiss()
+            startActivity(Intent(this, SavedActivity::class.java))
+        }
         view.findViewById<Button>(R.id.btnSignOut).setOnClickListener {
             sheet.dismiss()
             ChatNotifier.stop()

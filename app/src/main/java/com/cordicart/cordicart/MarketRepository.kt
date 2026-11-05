@@ -34,6 +34,35 @@ class MarketRepository {
             onListings(sortNewestFirst(items))
         }
 
+    /** Live list of YOUR listings (available and sold), newest first. For the My listings screen. */
+    fun listenToMyListings(
+        uid: String,
+        onListings: (List<MarketItem>) -> Unit,
+        onError: (String) -> Unit
+    ): ListenerRegistration =
+        listings.whereEqualTo("sellerId", uid)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    onError(error.message ?: "Unknown error")
+                    return@addSnapshotListener
+                }
+                if (snapshot == null) return@addSnapshotListener
+                onListings(sortNewestFirst(snapshot.documents.mapNotNull { MarketItem.fromDocument(it) }))
+            }
+
+    /** "available" or "sold". The database rules only let the seller change this one field. */
+    fun setStatus(listingId: String, status: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        listings.document(listingId).update("status", status)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onError(e.message ?: "Unknown error") }
+    }
+
+    fun deleteListing(listingId: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        listings.document(listingId).delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onError(e.message ?: "Unknown error") }
+    }
+
     fun addListing(item: MarketItem, onSuccess: () -> Unit, onError: (String) -> Unit) {
         listings.add(item.toMap())
             .addOnSuccessListener { onSuccess() }

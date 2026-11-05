@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
@@ -70,6 +71,7 @@ class ChatActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
         btnSend.setOnClickListener { send() }
+        findViewById<View>(R.id.btnMeetup).setOnClickListener { pickMeetupSpot() }
         input.doOnTextChanged { text, _, _, _ -> updateSendButton(text) }
         updateSendButton(null)
 
@@ -286,6 +288,24 @@ class ChatActivity : AppCompatActivity() {
         if (isNewChat) showMessages(messages.filter { it.id != "pending" })
         if (input.text.isEmpty()) input.setText(text)
         Toast.makeText(this, "Message not sent: $reason", Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * Safe campus meetup spots: pick one and a ready-made message goes into the box.
+     * The list is in res/values/strings.xml (meetup_spots), so the team can edit it.
+     */
+    private fun pickMeetupSpot() {
+        val spots = resources.getStringArray(R.array.meetup_spots)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.meetup_title)
+            .setItems(spots) { _, which ->
+                input.setText(getString(R.string.meetup_message, spots[which]))
+                input.setSelection(input.text.length)
+                input.requestFocus()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+        Toast.makeText(this, R.string.meetup_tip, Toast.LENGTH_LONG).show()
     }
 
     private fun updateSendButton(text: CharSequence?) {

@@ -183,6 +183,17 @@
         android:paddingEnd="12dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
+        <ImageButton
+            android:id="@+id/btnMeetup"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_circle_tint"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_pin"
+            app:tint="@color/cc_pine"
+            android:contentDescription="@string/suggest_meetup" />
         <EditText
             android:id="@+id/inputMessage"
             android:layout_width="0dp"

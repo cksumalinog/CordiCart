@@ -66,6 +66,15 @@ making school supplies more affordable.
 - Security rules make sure only the buyer and the seller can read a chat, and that nobody can send as someone else.
 - **Unread indicators:** a red badge on the Messages tab counts unread chats, and unread chats show a bold preview with an amber dot.
 - **New-message notifications** while the app is open or running in the background. Tapping one opens that chat. (Notifications when the app is fully closed would need Firebase Cloud Messaging and the paid Blaze plan.)
+- **Safe meetup spots:** the 📍 button in a chat suggests a public place on campus to meet (edit the list in `strings.xml` → `meetup_spots`).
+
+### 4. Selling and buying tools
+- **My listings** (Profile → My listings): everything you posted, available and sold. Long-press to manage.
+- **Confirm handoff & Mark as sold:** removes the item from the market and blocks new chats about it. Sellers can also mark it available again or delete it.
+- **Saved items:** tap the heart on a listing; find it later in the **Saved** tab. Private to you.
+- **Share listing:** opens Android's share menu (an *implicit intent*) to send the listing through Messenger, SMS, Gmail and other apps.
+- **More filters:** condition, price range and open-to-trade-only, on top of search and categories.
+- **Password reset:** "Forgot password?" emails a reset link through Firebase Authentication.
 
 ---
 
@@ -81,6 +90,8 @@ making school supplies more affordable.
 | 6 | Listing details | `ListingDetailActivity` | `activity_listing_detail.xml` |
 | 7 | Messages | `ChatListActivity` | `activity_chat_list.xml`, `item_chat.xml` |
 | 8 | Chat | `ChatActivity` | `activity_chat.xml`, `item_message.xml` |
+| 9 | My listings | `MyListingsActivity` | `activity_listing_grid.xml` |
+| 10 | Saved | `SavedActivity` | `activity_listing_grid.xml` |
 
 <!-- Add screenshots here, e.g.:
 <p align="center">
@@ -132,6 +143,10 @@ app/src/main/
 │   ├── Chat.kt                    # Chat and message models
 │   ├── ChatRepository.kt          # Firestore access for chats
 │   ├── ChatNotifier.kt            # Unread badge and new-message notifications
+│   ├── MyListingsActivity.kt      # 9 · My listings
+│   ├── SavedActivity.kt           # 10 · Saved items
+│   ├── MyListingActions.kt        # Mark as sold / available, Delete
+│   ├── SavedRepository.kt         # Firestore access for saved items
 │   ├── AuthRouter.kt              # Sends each student to the right screen
 │   ├── OtpManager.kt              # Generates, stores (hashed), and checks codes
 │   ├── MailSender.kt / MailConfig.kt  # Optional Gmail SMTP sending
@@ -187,6 +202,8 @@ To send real emails:
 
 ```
 users/{uid}          uid, email, displayName, department, verified, createdAt
+users/{uid}/saved/{listingId}
+                     listingId, savedAt                      (private to that student)
 otps/{uid}           codeHash, expiresAt, attempts, sentAt        (deleted after use)
 listings/{id}        title, category, courseCode, condition, price, openToTrade,
                      description, sellerId, sellerName, sellerDept, status, createdAt
@@ -218,8 +235,7 @@ These are known limitations of the current version:
 - **Resend timer:** the 60-second resend cooldown restarts if the screen is rotated or the app is reopened.
 - **Department search:** searching a college name also matches listings posted by students from that college.
 - **Notifications only while the app is running:** fully closed apps would need Cloud Messaging (Blaze plan).
-- **Not built yet:** photo upload, saved items, advanced filters, and password reset
-  show a "coming soon" message.
+- **Not built yet:** photo upload shows a "coming soon" message. The notification bell on the dashboard also still shows "coming soon".
 - **Scale:** the feed downloads all *available* listings and filters them on the phone, showing 30 at a time.
   This is fine at campus scale; thousands of listings would need server-side search and paging.
 
@@ -229,10 +245,11 @@ These are known limitations of the current version:
 
 - [x] In-app chat between buyers and sellers
 - [ ] Seller photo uploads
-- [ ] Safe campus meetup spots and **Confirm Handoff & Mark Sold**
+- [x] Safe campus meetup spots and **Confirm Handoff & Mark Sold**
 - [ ] Class-break pickup scheduler
 - [ ] Textbook lookup by ISBN or title (e.g. Open Library API)
-- [ ] Saved items and notifications
+- [x] Saved items and notifications
+- [x] My listings, Share listing, more filters, password reset
 
 ---
 

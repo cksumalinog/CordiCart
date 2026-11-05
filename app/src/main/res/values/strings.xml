@@ -116,4 +116,56 @@
     <string name="suggest_meet">Can we meet on campus?</string>
     <string name="show_more">Show %1$d more</string>
     <string name="suggest_price">Is the price negotiable?</string>
+    <!-- Share, save, sell actions -->
+    <string name="share_listing">Share listing</string>
+    <string name="manage_listing">Manage listing</string>
+    <string name="save_listing">Save listing</string>
+    <string name="unsave_listing">Remove from Saved</string>
+    <string name="sold">SOLD</string>
+
+    <!-- My listings -->
+    <string name="my_listings">My listings</string>
+    <string name="my_listings_empty_title">You haven\'t posted anything yet</string>
+    <string name="my_listings_empty_body">Done with last term\'s books or uniforms? Post them so another student can use them.</string>
+    <string name="my_listings_summary">%1$d on the market · %2$d sold · long-press an item to manage it</string>
+
+    <!-- Saved -->
+    <string name="saved_title">Saved</string>
+    <string name="saved_empty_title">No saved items yet</string>
+    <string name="saved_empty_body">Tap the heart on any listing to keep it here for later.</string>
+    <plurals name="saved_summary">
+        <item quantity="one">%1$d saved item</item>
+        <item quantity="other">%1$d saved items</item>
+    </plurals>
+
+    <!-- Filters -->
+    <string name="filters_title">Filters</string>
+    <string name="any">Any</string>
+    <string name="label_price_range">Price range (₱)</string>
+    <string name="hint_min_price">Min</string>
+    <string name="hint_max_price">Max</string>
+    <string name="trade_only_title">Open to trade only</string>
+    <string name="trade_only_hint">Show items you can swap for</string>
+    <string name="reset">Reset</string>
+    <string name="show_results">Show results</string>
+    <string name="filtered">filtered</string>
+
+    <!-- Password reset -->
+    <string name="reset_title">Reset your password</string>
+    <string name="reset_message">Enter your UC student email. We\'ll send you a link to set a new password.</string>
+    <string name="reset_send">Send link</string>
+    <string name="reset_sent">If %1$s has a CordiCart account, a reset link is on its way. Check your inbox and spam folder.</string>
+
+    <!-- Safe meetup spots (edit this list to match real places on campus) -->
+    <string name="suggest_meetup">Suggest a meetup spot</string>
+    <string name="meetup_title">Pick a safe meetup spot</string>
+    <string name="meetup_message">📍 Can we meet at %1$s? What time works for you?</string>
+    <string name="meetup_tip">Meet in busy, public places on campus, and check the item before paying.</string>
+    <string-array name="meetup_spots">
+        <item>the main lobby</item>
+        <item>the library entrance</item>
+        <item>the canteen</item>
+        <item>the main gate, near the guard post</item>
+        <item>the gym entrance</item>
+    </string-array>
 </resources>
