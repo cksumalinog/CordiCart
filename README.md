@@ -68,7 +68,20 @@ making school supplies more affordable.
 - **New-message notifications** while the app is open or running in the background. Tapping one opens that chat. (Notifications when the app is fully closed would need Firebase Cloud Messaging and the paid Blaze plan.)
 - **Safe meetup spots:** the 📍 button in a chat suggests a public place on campus to meet (edit the list in `strings.xml` → `meetup_spots`).
 
-### 4. Selling and buying tools
+### 4. Class-break pickup scheduler
+- **Pickup tab** (bottom bar): a month calendar. Days with a dot have items you can pick up on campus.
+  Tap a day to see the items, grouped by when each seller is free; a **"You're free too"** tag shows when your breaks overlap.
+- **My class breaks** (Pickup → My breaks, or Profile): each student adds their weekly free times once per term.
+  Sellers' items only appear on the calendar on days they have breaks.
+- **Request a pickup**: pick a 30-minute time inside the seller's break (times when you have class are faded) and a safe meetup spot.
+  It also works from the 🗓 button inside any chat.
+- **Pickup cards in chat**: the other student taps **Accept** or **Other time**; either can cancel. The seller gets
+  **"Handoff done? Mark as sold"** on confirmed pickups.
+- **My pickups**: everything you're buying or selling, with its status (confirmed, waiting, needs your answer).
+- **Reminder notification 30 minutes before** every confirmed pickup, using `AlarmManager` and a `BroadcastReceiver`
+  (`PickupReminderReceiver`, registered in the manifest), so it arrives even when the app is closed.
+
+### 5. Selling and buying tools
 - **My listings** (Profile → My listings): everything you posted, available and sold. Long-press to manage.
 - **Confirm handoff & Mark as sold:** removes the item from the market and blocks new chats about it. Sellers can also mark it available again or delete it.
 - **Saved items:** tap the heart on a listing; find it later in the **Saved** tab. Private to you.
@@ -92,6 +105,8 @@ making school supplies more affordable.
 | 8 | Chat | `ChatActivity` | `activity_chat.xml`, `item_message.xml` |
 | 9 | My listings | `MyListingsActivity` | `activity_listing_grid.xml` |
 | 10 | Saved | `SavedActivity` | `activity_listing_grid.xml` |
+| 11 | Pickup on campus | `PickupActivity` | `activity_pickup.xml`, `item_pickup_listing.xml`, `item_my_pickup.xml`, `sheet_pickup.xml` |
+| 12 | My class breaks | `BreaksActivity` | `activity_breaks.xml` |
 
 <!-- Add screenshots here, e.g.:
 <p align="center">
@@ -147,6 +162,13 @@ app/src/main/
 │   ├── SavedActivity.kt           # 10 · Saved items
 │   ├── MyListingActions.kt        # Mark as sold / available, Delete
 │   ├── SavedRepository.kt         # Firestore access for saved items
+│   ├── PickupActivity.kt          # 11 · Pickup tab: calendar + My pickups
+│   ├── BreaksActivity.kt          # 12 · My class breaks
+│   ├── PickupSheet.kt             # Request-a-pickup sheet (tab and chat)
+│   ├── PickupRepository.kt        # Firestore access for class breaks and pickups
+│   ├── PickupReminders.kt         # 30-minute reminders (AlarmManager + receiver)
+│   ├── Schedule.kt / Pickup.kt    # Class break, schedule and pickup models, time helpers
+│   ├── BottomNav.kt               # Shared bottom bar and profile sheet
 │   ├── AuthRouter.kt              # Sends each student to the right screen
 │   ├── OtpManager.kt              # Generates, stores (hashed), and checks codes
 │   ├── MailSender.kt / MailConfig.kt  # Optional Gmail SMTP sending
@@ -212,7 +234,11 @@ chats/{listingId}_{buyerId}
                      buyerId, buyerName, sellerId, sellerName, participants,
                      lastMessage, lastSenderId, updatedAt, lastRead {uid: time}, createdAt
 chats/{chatId}/messages/{id}
-                     senderId, text, createdAt
+                     senderId, text, createdAt, pickupId (pickup cards only)
+schedules/{uid}      breaks [{day, start, end}], updatedAt     (times = minutes after midnight)
+pickups/{id}         listingId, listingTitle, listingCategory, chatId, buyerId, buyerName,
+                     sellerId, sellerName, participants, requestedBy, date "yyyy-MM-dd",
+                     start, end, spot, status (pending/accepted/declined/cancelled)
 ```
 
 Security rules allow only signed-in UC student accounts. Only **verified** students can read or post listings,
@@ -246,7 +272,7 @@ These are known limitations of the current version:
 - [x] In-app chat between buyers and sellers
 - [ ] Seller photo uploads
 - [x] Safe campus meetup spots and **Confirm Handoff & Mark Sold**
-- [ ] Class-break pickup scheduler
+- [x] Class-break pickup scheduler
 - [ ] Textbook lookup by ISBN or title (e.g. Open Library API)
 - [x] Saved items and notifications
 - [x] My listings, Share listing, more filters, password reset
