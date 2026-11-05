@@ -44,5 +44,9 @@
         <activity android:name=".ChatListActivity" android:exported="false" />
         <!-- 8 · Chat -->
         <activity android:name=".ChatActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <!-- 9 · My listings -->
+        <activity android:name=".MyListingsActivity" android:exported="false" />
+        <!-- 10 · Saved -->
+        <activity android:name=".SavedActivity" android:exported="false" />
     </application>
 </manifest>

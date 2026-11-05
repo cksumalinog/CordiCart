@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -44,9 +46,7 @@ class MainActivity : AppCompatActivity() {
         passwordInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) { attemptLogin(); true } else false
         }
-        findViewById<TextView>(R.id.btnForgotPassword).setOnClickListener {
-            Ui.comingSoon(this, "Password reset")
-        }
+        findViewById<TextView>(R.id.btnForgotPassword).setOnClickListener { showPasswordReset() }
         findViewById<Button>(R.id.btnCreateAccount).setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
@@ -91,6 +91,55 @@ class MainActivity : AppCompatActivity() {
                     else "Log in failed: ${e.message}"
                 Ui.showError(msgBox, message)
             }
+    }
+
+    /**
+     * "Forgot password?": Firebase emails the student a link to set a new password.
+     * The email field is pre-filled with whatever is typed on the Log in screen.
+     */
+    private fun showPasswordReset() {
+        val input = EditText(this).apply {
+            hint = getString(R.string.hint_email)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            setText(emailInput.text)
+            setSingleLine()
+        }
+        val pad = (20 * resources.displayMetrics.density).toInt()
+        val box = android.widget.FrameLayout(this).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(R.string.reset_title)
+            .setMessage(R.string.reset_message)
+            .setView(box)
+            .setPositiveButton(R.string.reset_send, null)   // set below, so a bad email doesn't close the dialog
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val email = EmailValidator.normalize(input.text.toString())
+                if (!EmailValidator.isValidStudent(email)) {
+                    input.error = getString(R.string.error_invalid_email)
+                    return@setOnClickListener
+                }
+                auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (isFinishing || isDestroyed) return@addOnCompleteListener
+                        dialog.dismiss()
+                        // Same message either way, so the screen doesn't reveal which emails have accounts.
+                        if (task.isSuccessful || task.exception is FirebaseAuthInvalidUserException) {
+                            Ui.showInfo(msgBox, getString(R.string.reset_sent, email))
+                            Toast.makeText(this, "Check your UC email for the reset link.", Toast.LENGTH_LONG).show()
+                        } else {
+                            Ui.showError(msgBox, "Could not send the reset email: ${task.exception?.message}")
+                        }
+                    }
+            }
+        }
+        dialog.show()
     }
 
     /** Shows or hides the password, keeping the cursor at the end. */

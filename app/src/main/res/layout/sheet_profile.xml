@@ -81,6 +81,42 @@
             android:text="@string/verified_student" />
     </LinearLayout>
 
+    <!-- Shortcuts -->
+    <LinearLayout
+        android:id="@+id/btnMyListings"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="12dp">
+        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_tag" app:tint="@color/cc_pine" android:importantForAccessibility="no" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:text="@string/my_listings" android:textColor="@color/cc_ink" android:textSize="15sp" android:textStyle="bold" />
+        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_chevron_right" app:tint="@color/cc_muted" android:importantForAccessibility="no" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/btnSavedItems"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="12dp">
+        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_heart" app:tint="@color/cc_pine" android:importantForAccessibility="no" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:text="@string/saved_title" android:textColor="@color/cc_ink" android:textSize="15sp" android:textStyle="bold" />
+        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_chevron_right" app:tint="@color/cc_muted" android:importantForAccessibility="no" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnSignOut"
         style="@style/CC.Button.Outline"
